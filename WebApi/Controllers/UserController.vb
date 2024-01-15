@@ -33,12 +33,17 @@ Namespace API.Controllers
         Public Async Function Login(dto As LoginData) As Task(Of IActionResult)
             Dim response = Await _service.Login(dto.EMail, dto.Password)
 
-            Dim claims = New List(Of Claim)() From {
-            New Claim(JwtRegisteredClaimNames.NameId, response.Data.Id.ToString()),
-            New Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
-            }
+            Dim claims = New List(Of Claim)()
+            If response.Data IsNot Nothing Then
+                Dim userId As Long = response.Data.Id
+                claims.Add(New Claim(JwtRegisteredClaimNames.NameId, userId.ToString()))
+            End If
+
+            claims.Add(New Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()))
             Dim accessToken = New JwtGenerator(_configuration).CreateAccessToken(claims)
-            response.Data.Token = accessToken.Token
+            If response IsNot Nothing AndAlso response.Data IsNot Nothing AndAlso accessToken IsNot Nothing Then
+                response.Data.Token = accessToken.Token
+            End If
             Return StatusCode(response.StatusCode, response)
         End Function
 

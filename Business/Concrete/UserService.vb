@@ -25,8 +25,9 @@ Public Class UserService
     Public Async Function Login(Email As String, password As String) As Task(Of ApiResponse(Of GetUser)) Implements IUserService.Login
         Dim control = Await _userRepo.GetAsync(Function(p) p.EMail.Equals(Email) And p.Password.Equals(password))
         If control Is Nothing Then
-            ApiResponse(Of User).Fail(StatusCodes.Status400BadRequest, "Giriş başarısız")
+            Return ApiResponse(Of GetUser).Fail(StatusCodes.Status400BadRequest, "Giriş başarısız")
         End If
+
         Dim mapping = _mapper.Map(Of GetUser)(control)
         Return ApiResponse(Of GetUser).Success(StatusCodes.Status200OK, mapping)
     End Function
@@ -40,4 +41,6 @@ Public Class UserService
         Await _userRepo.UpdateAsync(control)
         Return ApiResponse(Of LoginData).Success(StatusCodes.Status200OK)
     End Function
+
+
 End Class

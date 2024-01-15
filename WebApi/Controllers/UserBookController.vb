@@ -21,7 +21,7 @@ Namespace API.Controllers
             _service = service
         End Sub
 
-        <HttpPost("getall")>
+        <HttpGet("getall")>
         Public Async Function GetAll() As Task(Of IActionResult)
             Dim currentUserId = CurrentUser.Get(HttpContext)
             Dim response = Await _service.GetAll(currentUserId)
@@ -50,6 +50,18 @@ Namespace API.Controllers
             Return StatusCode(response.StatusCode, response)
         End Function
 
+        <HttpGet("myloans")>
+        Public Async Function MyLoans() As Task(Of IActionResult)
+            Dim currentUserId = CurrentUser.Get(HttpContext)
+            Dim response = Await _service.MyLoans(currentUserId, "Book")
+            Return StatusCode(response.StatusCode, response)
+        End Function
 
+        <HttpGet("myreadbooks")>
+        Public Async Function MyReadBooks() As Task(Of IActionResult)
+            Dim currentUserId = CurrentUser.Get(HttpContext)
+            Dim response = Await _service.MyReadBooks(currentUserId, "Book")
+            Return StatusCode(response.StatusCode, response)
+        End Function
     End Class
 End Namespace

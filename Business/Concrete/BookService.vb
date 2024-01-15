@@ -9,13 +9,15 @@ Public Class BookService
 
     Private ReadOnly _repo As IBookRepository
     Private ReadOnly _mapper As IMapper
-    Public Sub New(repo As IBookRepository, mapper As IMapper)
+    Private ReadOnly _repoUser As IUserRepository
+    Public Sub New(repo As IBookRepository, mapper As IMapper, repoUser As IUserRepository)
         _repo = repo
         _mapper = mapper
+        _repoUser = repoUser
     End Sub
 
     Public Async Function GetAll(currentUserId As Long) As Task(Of ApiResponse(Of List(Of Book))) Implements IBookService.GetAll
-        Dim currentUser = Await _repo.GetByIdAsync(currentUserId)
+        Dim currentUser = Await _repoUser.GetByIdAsync(currentUserId)
         If currentUser Is Nothing Then
             Throw New BadRequestException("Kullanıcının yetkisi yok!!")
         End If
